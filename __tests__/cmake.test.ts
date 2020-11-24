@@ -1,3 +1,4 @@
+import * as fs from 'fs'
 import * as process from 'process';
 import * as path from 'path';
 import * as io from '@actions/io';
@@ -17,6 +18,9 @@ describe('get-cmake', () => {
             .forEach(key => {
                 delete process.env[key];
             });
+        const gh_path = path.join(tempDirectory, 'gh-path');
+        fs.writeFileSync(gh_path, "");
+        process.env.GITHUB_PATH = gh_path;
         process.env.INPUT_CMAKE = '3.17.2';
         process.env.GITHUB_WORKSPACE = tempDirectory;
         process.env.RUNNER_TEMP = path.join(tempDirectory, 'temp');
