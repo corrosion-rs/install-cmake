@@ -21,7 +21,7 @@ jobs:
             - run: |
                   npm install
               name: build
-            - uses: symbitic/install-cmake@master
+            - uses: ./
               name: validation test by running install-cmake
             - run: |
                   which cmake
