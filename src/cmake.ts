@@ -8,6 +8,8 @@ import * as core from '@actions/core';
 import * as path from 'path';
 import * as fs from 'fs';
 
+import { gte } from 'semver';
+
 interface PackageInfo {
     url: string;
     binPath: string;
@@ -43,6 +45,37 @@ function getOutputPath(subDir: string): string {
     return path.join(process.env.RUNNER_TEMP, subDir);
 }
 
+function get_artifact_path_win64(version: string): string {
+    const post_3_20 = `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-windows-x86_64.zip`;
+    const pre_3_20 = `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-win64-x64.zip`;
+
+    if (gte(version, '3.20.0')) {
+        return post_3_20;
+    } else {
+        return pre_3_20;
+    }
+}
+
+function get_artifact_path_macos(version: string): string {
+    const post_3_20 = `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-macos-universal.tar.gz`;
+    const pre_3_20 = `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-Darwin-x86_64.tar.gz`;
+    if (gte(version, '3.20.0')) {
+        return post_3_20;
+    } else {
+        return pre_3_20;
+    }
+}
+
+function get_artifact_path_linux(version: string): string {
+    const post_3_20 = `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-linux-x86_64.tar.gz`;
+    const pre_3_20 = `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-Linux-x86_64.tar.gz`;
+    if (gte(version, '3.20.0')) {
+        return post_3_20;
+    } else {
+        return pre_3_20;
+    }
+}
+
 function getPlatformData(version: string, platform?: string): PackageInfo {
     const platformStr = platform || process.platform;
     switch (platformStr) {
@@ -53,7 +86,7 @@ function getPlatformData(version: string, platform?: string): PackageInfo {
                 binPath: 'bin/',
                 dropSuffix: '.zip',
                 extractFunction: tools.extractZip,
-                url: `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-win64-x64.zip`
+                url: get_artifact_path_win64(version)
             };
         case 'mac':
         case 'darwin':
@@ -61,14 +94,14 @@ function getPlatformData(version: string, platform?: string): PackageInfo {
                 binPath: 'CMake.app/Contents/bin/',
                 dropSuffix: '.tar.gz',
                 extractFunction: tools.extractTar,
-                url: `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-Darwin-x86_64.tar.gz`
+                url: get_artifact_path_macos(version)
             };
         case 'linux':
             return {
                 binPath: 'bin/',
                 dropSuffix: '.tar.gz',
                 extractFunction: tools.extractTar,
-                url: `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-Linux-x86_64.tar.gz`
+                url: get_artifact_path_linux(version)
             };
         default:
             throw new Error(`Unsupported platform '${platformStr}'`);
