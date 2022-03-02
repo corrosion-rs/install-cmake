@@ -57,12 +57,12 @@ function get_artifact_path_win64(version: string): string {
 }
 
 function get_artifact_path_macos(version: string): string {
-    const post_3_20 = `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-macos-universal.tar.gz`;
-    const pre_3_20 = `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-Darwin-x86_64.tar.gz`;
-    if (gte(version, '3.20.0')) {
-        return post_3_20;
+    const post_3_19_2 = `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-macos-universal.tar.gz`;
+    const pre_3_19_2 = `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-Darwin-x86_64.tar.gz`;
+    if (gte(version, '3.19.2')) {
+        return post_3_19_2;
     } else {
-        return pre_3_20;
+        return pre_3_19_2;
     }
 }
 
