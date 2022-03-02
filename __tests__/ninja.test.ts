@@ -22,7 +22,6 @@ describe('get-ninja', () => {
         fs.writeFileSync(gh_path, "");
         process.env.GITHUB_PATH = gh_path;
         process.env.INPUT_NINJA = '1.9.0';
-        process.env.INPUT_PLATFORM = 'linux';
         process.env.INPUT_DESTINATION = tempDirectory;
         process.env.GITHUB_WORKSPACE = tempDirectory;
         process.env.RUNNER_TEMP = path.join(tempDirectory, 'temp');
