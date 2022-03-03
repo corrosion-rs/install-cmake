@@ -1129,11 +1129,21 @@ function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             yield cmake_1.cmake();
+        }
+        catch (err) {
+            const errorAsString = (err !== null && err !== void 0 ? err : 'undefined error').toString();
+            core.debug('Error downloading cmake: ' + errorAsString);
+            core.error(errorAsString);
+            core.setFailed('install-cmake failed');
+            return 1;
+        }
+        // debug only
+        try {
             yield ninja_1.ninja();
         }
         catch (err) {
             const errorAsString = (err !== null && err !== void 0 ? err : 'undefined error').toString();
-            core.debug('Error: ' + errorAsString);
+            core.debug('Error downloading ninja: ' + errorAsString);
             core.error(errorAsString);
             core.setFailed('install-cmake failed');
             return 1;
@@ -4753,6 +4763,7 @@ const tools = __webpack_require__(533);
 const core = __webpack_require__(470);
 const path = __webpack_require__(622);
 const fs = __webpack_require__(747);
+const semver_1 = __webpack_require__(280);
 /**
  * Compute an unique number given some text.
  * @param {string} text
@@ -4774,6 +4785,36 @@ function getOutputPath(subDir) {
     }
     return path.join(process.env.RUNNER_TEMP, subDir);
 }
+function get_artifact_path_win64(version) {
+    const post_3_20 = `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-windows-x86_64.zip`;
+    const pre_3_20 = `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-win64-x64.zip`;
+    if (semver_1.gte(version, '3.20.0')) {
+        return post_3_20;
+    }
+    else {
+        return pre_3_20;
+    }
+}
+function get_artifact_path_macos(version) {
+    const post_3_19_2 = `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-macos-universal.tar.gz`;
+    const pre_3_19_2 = `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-Darwin-x86_64.tar.gz`;
+    if (semver_1.gte(version, '3.19.2')) {
+        return post_3_19_2;
+    }
+    else {
+        return pre_3_19_2;
+    }
+}
+function get_artifact_path_linux(version) {
+    const post_3_20 = `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-linux-x86_64.tar.gz`;
+    const pre_3_20 = `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-Linux-x86_64.tar.gz`;
+    if (semver_1.gte(version, '3.20.0')) {
+        return post_3_20;
+    }
+    else {
+        return pre_3_20;
+    }
+}
 function getPlatformData(version, platform) {
     const platformStr = platform || process.platform;
     switch (platformStr) {
@@ -4784,7 +4825,7 @@ function getPlatformData(version, platform) {
                 binPath: 'bin/',
                 dropSuffix: '.zip',
                 extractFunction: tools.extractZip,
-                url: `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-win64-x64.zip`
+                url: get_artifact_path_win64(version)
             };
         case 'mac':
         case 'darwin':
@@ -4792,14 +4833,14 @@ function getPlatformData(version, platform) {
                 binPath: 'CMake.app/Contents/bin/',
                 dropSuffix: '.tar.gz',
                 extractFunction: tools.extractTar,
-                url: `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-Darwin-x86_64.tar.gz`
+                url: get_artifact_path_macos(version)
             };
         case 'linux':
             return {
                 binPath: 'bin/',
                 dropSuffix: '.tar.gz',
                 extractFunction: tools.extractTar,
-                url: `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-Linux-x86_64.tar.gz`
+                url: get_artifact_path_linux(version)
             };
         default:
             throw new Error(`Unsupported platform '${platformStr}'`);
@@ -4810,12 +4851,14 @@ function cmake() {
         const version = core.getInput('cmake', {
             required: true
         });
+        console.log('Action started.');
         const platform = core.getInput('platform');
         const data = getPlatformData(version, platform);
         // Get an unique output directory name from the URL.
         const key = hashCode(data.url);
         const cmakePath = getOutputPath(key);
         const { pathname } = new URL(data.url);
+        core.debug(`download URL: ${data.url}.`);
         const dirName = path.basename(pathname);
         const outputPath = path.join(cmakePath, dirName.replace(data.dropSuffix, ''), data.binPath);
         const cmakeDir = tools.find('cmake', version);
@@ -4824,11 +4867,13 @@ function cmake() {
             return path.join(cmakeDir, platform === 'win' ? 'cmake.exe' : 'cmake');
         }
         if (!fs.existsSync(cmakePath)) {
+            core.debug(`Not cached - attempting to download URL: ${data.url}.`);
             yield core.group('Download and extract CMake', () => __awaiter(this, void 0, void 0, function* () {
                 const downloaded = yield tools.downloadTool(data.url);
                 yield data.extractFunction(downloaded, cmakePath);
             }));
         }
+        core.debug('Finished download');
         try {
             core.startGroup(`Add CMake to PATH`);
             core.addPath(outputPath);
