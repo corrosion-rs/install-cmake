@@ -19,7 +19,8 @@
         "prepack": "npm run build",
         "release": "standard-version",
         "test": "jest",
-        "pretest": "tsc --noEmit"
+        "pretest": "tsc --noEmit",
+        "prepare": "husky install"
     },
     "commitlint": {
         "extends": [
@@ -62,7 +63,7 @@
         "eslint-plugin-import": "^2.26.0",
         "eslint-plugin-jest": "^23.13.1",
         "eslint-plugin-prettier": "^4.2.1",
-        "husky": "^4.2.5",
+        "husky": "^8.0.1",
         "jest": "^26.0.1",
         "jest-circus": "^26.0.1",
         "lint-staged": "^13.0.3",
