@@ -13,7 +13,7 @@ inputs:
     platform:
         description: 'Override default platform with one of [win, mac, linux]'
 runs:
-    using: 'node12'
+    using: 'node16'
     main: 'dist/index.js'
 branding:
     icon: 'terminal'
