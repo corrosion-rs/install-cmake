@@ -9,7 +9,7 @@ const tempDirectory = path.join(__dirname, 'temp-get-cmake');
 
 jest.setTimeout(30 * 1000);
 
-describe.each([['3.12.4'], ['3.19.8'], ['3.20.0'], ['3.22.2']])(
+describe.each([['3.12.4'], ['3.19.8'], ['3.20.0'], ['3.24.2']])(
     `get-cmake %s`,
     cmake_version => {
         beforeEach(async () => {
