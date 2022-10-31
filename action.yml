@@ -4,7 +4,7 @@ author: 'Alex Shaw https://github.com/symbitic'
 inputs:
     cmake:
         description: 'Version of CMake to install'
-        default: '3.20.0'
+        default: '3.24.2'
         required: true
     ninja:
         description: 'Version of ninja-build to install'
