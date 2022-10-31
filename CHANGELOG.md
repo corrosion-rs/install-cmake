@@ -4,7 +4,8 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## 0.2.0 (2022-10-31)
 
-Increase Nodejs minimum version to Nodejs16.
+- Increase Nodejs minimum version to Nodejs16.
+- Bump all dependencies to the latest version
 
 ## 0.1.0 (2020-05-29)
 
