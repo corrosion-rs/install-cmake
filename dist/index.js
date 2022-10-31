@@ -51,7 +51,7 @@ function getOutputPath(subDir) {
 function get_artifact_path_win64(version) {
     const post_3_20 = `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-windows-x86_64.zip`;
     const pre_3_20 = `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-win64-x64.zip`;
-    if (semver_1.gte(version, '3.20.0')) {
+    if ((0, semver_1.gte)(version, '3.20.0')) {
         return post_3_20;
     }
     else {
@@ -61,7 +61,7 @@ function get_artifact_path_win64(version) {
 function get_artifact_path_macos(version) {
     const post_3_19_2 = `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-macos-universal.tar.gz`;
     const pre_3_19_2 = `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-Darwin-x86_64.tar.gz`;
-    if (semver_1.gte(version, '3.19.2')) {
+    if ((0, semver_1.gte)(version, '3.19.2')) {
         return post_3_19_2;
     }
     else {
@@ -71,7 +71,7 @@ function get_artifact_path_macos(version) {
 function get_artifact_path_linux(version) {
     const post_3_20 = `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-linux-x86_64.tar.gz`;
     const pre_3_20 = `https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-Linux-x86_64.tar.gz`;
-    if (semver_1.gte(version, '3.20.0')) {
+    if ((0, semver_1.gte)(version, '3.20.0')) {
         return post_3_20;
     }
     else {
@@ -171,8 +171,8 @@ const ninja_1 = __nccwpck_require__(6526);
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield cmake_1.cmake();
-            yield ninja_1.ninja();
+            yield (0, cmake_1.cmake)();
+            yield (0, ninja_1.ninja)();
         }
         catch (err) {
             const errorAsString = (err !== null && err !== void 0 ? err : 'undefined error').toString();
